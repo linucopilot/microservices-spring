@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: user-service
+  datasource:
+    url: jdbc:postgresql://postgres:5432/microservices_spring
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+server:
+  port: 8081
+
+jwt:
+  secret: "your-super-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm-change-this"

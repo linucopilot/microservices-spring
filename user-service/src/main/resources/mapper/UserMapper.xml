@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prasac.userservice.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.prasac.userservice.entity.User">
+        <id column="id" property="id" javaType="java.lang.Long" />
+        <result column="username" property="username" javaType="java.lang.String" />
+        <result column="email" property="email" javaType="java.lang.String" />
+        <result column="full_name" property="fullName" javaType="java.lang.String" />
+        <result column="phone" property="phone" javaType="java.lang.String" />
+        <result column="address" property="address" javaType="java.lang.String" />
+        <result column="active" property="active" javaType="java.lang.Boolean" />
+        <result column="created_at" property="createdAt" javaType="java.time.LocalDateTime" />
+        <result column="updated_at" property="updatedAt" javaType="java.time.LocalDateTime" />
+    </resultMap>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="UserResultMap">
+        SELECT id, username, email, full_name, phone, address, active, created_at, updated_at
+        FROM users
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectByUsername" parameterType="java.lang.String" resultMap="UserResultMap">
+        SELECT id, username, email, full_name, phone, address, active, created_at, updated_at
+        FROM users
+        WHERE username = #{username}
+    </select>
+
+    <select id="selectAll" resultMap="UserResultMap">
+        SELECT id, username, email, full_name, phone, address, active, created_at, updated_at
+        FROM users
+        ORDER BY created_at DESC
+    </select>
+
+    <insert id="insert" parameterType="com.prasac.userservice.entity.User">
+        INSERT INTO users (username, email, full_name, phone, address, active, created_at, updated_at)
+        VALUES (#{username}, #{email}, #{fullName}, #{phone}, #{address}, #{active}, NOW(), NOW())
+    </insert>
+
+    <update id="update" parameterType="com.prasac.userservice.entity.User">
+        UPDATE users SET
+            username = #{username},
+            email = #{email},
+            full_name = #{fullName},
+            phone = #{phone},
+            address = #{address},
+            active = #{active},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM users WHERE id = #{id}
+    </delete>
+
+</mapper>

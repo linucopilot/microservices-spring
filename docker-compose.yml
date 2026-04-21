@@ -1,0 +1,91 @@
+version: '3.8'
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: prasac-postgres
+    environment:
+      POSTGRES_DB: microservices_spring
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - prasac-network
+
+  # Auth Service
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+    container_name: auth-service
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/microservices_spring
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      JWT_SECRET: "your-super-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm-change-this"
+      JWT_EXPIRATION: 86400000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - prasac-network
+
+  # User Service
+  user-service:
+    build:
+      context: .
+      dockerfile: user-service/Dockerfile
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/microservices_spring
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      JWT_SECRET: "your-super-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm-change-this"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - prasac-network
+
+  # API Gateway
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: auth-service
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://auth-service:8080
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: Path=/api/auth/**
+      SPRING_CLOUD_GATEWAY_ROUTES[1]_ID: user-service
+      SPRING_CLOUD_GATEWAY_ROUTES[1]_URI: http://user-service:8081
+      SPRING_CLOUD_GATEWAY_ROUTES[1]_PREDICATES[0]: Path=/api/users/**
+      JWT_SECRET: "your-super-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm-change-this"
+    depends_on:
+      - auth-service
+      - user-service
+    networks:
+      - prasac-network
+
+volumes:
+  postgres_data:
+
+networks:
+  prasac-network:
+    driver: bridge
+
