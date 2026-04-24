@@ -17,29 +17,29 @@
 
     <select id="selectById" parameterType="java.lang.Long" resultMap="UserResultMap">
         SELECT id, username, email, full_name, phone, address, active, created_at, updated_at
-        FROM users
+        FROM users_detail
         WHERE id = #{id}
     </select>
 
     <select id="selectByUsername" parameterType="java.lang.String" resultMap="UserResultMap">
         SELECT id, username, email, full_name, phone, address, active, created_at, updated_at
-        FROM users
+        FROM users_detail
         WHERE username = #{username}
     </select>
 
     <select id="selectAll" resultMap="UserResultMap">
         SELECT id, username, email, full_name, phone, address, active, created_at, updated_at
-        FROM users
+        FROM users_detail
         ORDER BY created_at DESC
     </select>
 
-    <insert id="insert" parameterType="com.prasac.userservice.entity.User">
-        INSERT INTO users (username, email, full_name, phone, address, active, created_at, updated_at)
+    <insert id="insert" parameterType="com.prasac.userservice.entity.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users_detail (username, email, full_name, phone, address, active, created_at, updated_at)
         VALUES (#{username}, #{email}, #{fullName}, #{phone}, #{address}, #{active}, NOW(), NOW())
     </insert>
 
     <update id="update" parameterType="com.prasac.userservice.entity.User">
-        UPDATE users SET
+        UPDATE users_detail SET
             username = #{username},
             email = #{email},
             full_name = #{fullName},
@@ -51,7 +51,7 @@
     </update>
 
     <delete id="deleteById" parameterType="java.lang.Long">
-        DELETE FROM users WHERE id = #{id}
+        DELETE FROM users_detail WHERE id = #{id}
     </delete>
 
 </mapper>

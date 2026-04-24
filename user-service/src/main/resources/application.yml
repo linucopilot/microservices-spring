@@ -2,9 +2,9 @@ spring:
   application:
     name: user-service
   datasource:
-    url: jdbc:postgresql://postgres:5432/microservices_spring
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/microservices_spring}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 
 mybatis:
@@ -16,4 +16,4 @@ server:
   port: 8081
 
 jwt:
-  secret: "your-super-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm-change-this"
+  secret: ${JWT_SECRET:your-super-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm-change-this}

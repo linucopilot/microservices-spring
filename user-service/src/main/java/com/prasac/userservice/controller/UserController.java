@@ -1,9 +1,12 @@
 package com.prasac.userservice.controller;
 
+import com.prasac.userservice.dto.UserRequest;
 import com.prasac.userservice.entity.User;
 import com.prasac.userservice.service.UserService;
 import com.prasac.common.dto.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +20,8 @@ public class UserController {
     public ResponseEntity<ApiResponse<?>> getUserById(@PathVariable Long id) {
         User user = userService.getUserById(id);
         if (user == null) {
-            return ResponseEntity.ok(ApiResponse.error(404, "User not found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(HttpStatus.NOT_FOUND.value(), "User not found"));
         }
         return ResponseEntity.ok(ApiResponse.success("User found", user));
     }
@@ -28,15 +32,15 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<?>> createUser(@RequestBody User user) {
+    public ResponseEntity<ApiResponse<?>> createUser(@Valid @RequestBody UserRequest user) {
         User created = userService.createUser(user);
-        return ResponseEntity.ok(ApiResponse.success("User created successfully", created));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success("User created successfully", created));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<?>> updateUser(@PathVariable Long id, @RequestBody User user) {
-        user.setId(id);
-        User updated = userService.updateUser(user);
+    public ResponseEntity<ApiResponse<?>> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest user) {
+        User updated = userService.updateUser(id, user);
         return ResponseEntity.ok(ApiResponse.success("User updated successfully", updated));
     }
 
@@ -46,6 +50,7 @@ public class UserController {
         if (deleted) {
             return ResponseEntity.ok(ApiResponse.success("User deleted successfully", null));
         }
-        return ResponseEntity.ok(ApiResponse.error(404, "User not found"));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(HttpStatus.NOT_FOUND.value(), "User not found"));
     }
 }
