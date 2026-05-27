@@ -1,5 +1,6 @@
 package com.prasac.authservice.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,10 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
-    private String accessToken;
+public class RefreshTokenRequest {
+    @NotBlank(message = "Refresh token is required")
     private String refreshToken;
-    private String username;
-    private Long userId;
-    private String email;
 }

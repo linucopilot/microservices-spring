@@ -12,9 +12,14 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 
+  sql:
+    init:
+      mode: always
+
 server:
   port: 8080
 
 jwt:
   secret: ${JWT_SECRET:your-super-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm-change-this}
   expiration: ${JWT_EXPIRATION:86400000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}

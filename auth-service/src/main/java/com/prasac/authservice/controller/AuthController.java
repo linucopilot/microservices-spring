@@ -1,6 +1,7 @@
 package com.prasac.authservice.controller;
 
 import com.prasac.authservice.dto.LoginRequest;
+import com.prasac.authservice.dto.RefreshTokenRequest;
 import com.prasac.authservice.dto.RegisterRequest;
 import com.prasac.authservice.service.AuthService;
 import com.prasac.common.dto.ApiResponse;
@@ -25,6 +26,11 @@ public class AuthController {
     public ResponseEntity<ApiResponse<?>> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("User registered successfully", authService.register(request)));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<?>> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(ApiResponse.success("Token refreshed", authService.refreshToken(request)));
     }
 
     @GetMapping("/validate")
